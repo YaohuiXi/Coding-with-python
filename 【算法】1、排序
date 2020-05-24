@@ -4,11 +4,110 @@
 堆	O(nlogn)	O(nlogn)	O(1)	不稳定
 
 快排：从数列中挑出一个元素，称为 “基准”（pivot）, 重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面。递归地把小于基准值元素的子数列和大于基准值元素的子数列排序
+ ```
+class Solution:
+    def findKthLargest(self,nums, k):
+        return self.quick_sort(nums,0,len(nums)-1)
+
+    def quick_sort(self, data, left, right):
+        if left < right:
+            # pivot位置
+            pivot = self.partation(data, left, right)
+            self.quick_sort(data, left, pivot - 1)
+            self.quick_sort(data, pivot + 1, right)
+        return data
+
+    def partation(self, data, low, high):
+        # print(low)
+        # print(high)
+        left = low
+        right = high
+        k = data[left]
+        while left < right:
+            # print(k)
+            while left < right and data[right] > k:  # not >=  otherwise IndexError: list index out of range
+                right -= 1
+            while left < right and data[left] <= k:
+                left += 1
+            if left < right:
+                data[left], data[right] = data[right], data[left]
+        data[low] = data[right]
+        data[right] = k
+        return right
+
+
+if __name__ == '__main__':
+    s = Solution()
+    nums = [1,2,3,4]
+    print(s.findKthLargest(nums,1))
+ ```
 
 归并排序：分治，把长度为n的输入序列分成两个长度为n/2的子序列。对这两个子序列分别采用归并排序；将两个排序好的子序列合并成一个最终的排序序列
+ ```
+ 
+def merge(a, b):
+    c = []
+    h = j = 0
+    while j < len(a) and h < len(b):
+        if a[j] < b[h]:
+            c.append(a[j])
+            j += 1
+        else:
+            c.append(b[h])
+            h += 1
+    return c + b[h:] + a[j:]
+
+def merge_sort(lists):
+    if len(lists) <= 1:
+        return lists
+    middle = len(lists)//2
+    left = merge_sort(lists[:middle])
+    right = merge_sort(lists[middle:])
+    return merge(left, right)
+
+if __name__ == '__main__':
+    a = [4, 7, 8, 3, 5, 9]
+    print(merge_sort(a))
+  ```
 
 堆排序（从小到大）将待排序序列构造成一个大顶堆，此时，整个序列的最大值就是堆顶的根节点。将其与末尾元素进行交换，此时末尾就为最大值。然后将剩余n-1个元素重新构造成一个堆，这样会得到n个元素的次小值。如此反复执行，便能得到一个有序序列了
+  ```
+class Solution:
+    def findKthLargest(self, nums, k):
+        return self.build_heap(nums, k)
 
-| 栏目1 | 栏目2 |
-| ----- | ----- |
-| 内容1 | 内容2 | 
+    def build_heap(self, nums, k):
+        length = len(nums) - 1
+        # 建堆,从最下面的根节点开始，从下到上建堆
+        for i in range(length // 2, -1, -1):
+            self.heap_max(nums, i, length)
+        for i in range(length):
+            nums[0], nums[length - i] = nums[length - i], nums[0]
+            # 每次调整后要重新进行堆排
+            self.heap_max(nums, 0, length - i - 1)
+        return nums
+        # print(nums[-k])
+
+    def heap_max(self, nums, i, length):
+        left_child = 2 * i + 1
+        right_child = 2 * i + 2
+        largest = i
+        if left_child <= length:
+            if nums[left_child] > nums[largest]:
+                largest = left_child
+        if right_child <= length:
+            if nums[right_child] > nums[largest]:
+                largest = right_child
+        if largest != i:
+            nums[largest], nums[i] = nums[i], nums[largest]
+            self.heap_max(nums, largest, length)
+
+if __name__ == '__main__':
+    nums = [50, 16, 30, 10, 60, 90, 2, 80, 70]
+    print(Solution().findKthLargest(nums,1))
+    ```
+扩展：
+
+1、小马三面：k个有序数组合并为一个数组。
+
+2、剑指offer：数据流的中位数（构造一个大顶堆，一个小顶堆）
