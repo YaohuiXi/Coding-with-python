@@ -205,4 +205,38 @@ class Solution:
             b //= 10
         return ans
 ```
-
+## 14、剪绳子（DP）
+DP的解法
+```
+# -*- coding:utf-8 -*-
+class Solution:
+    def cutRope(self, number):
+        # write code here
+        if number == 2:
+            return 1
+        if number == 3:
+            return 2
+        memo = [0,1, 2, 3] + [0] * (number - 3)
+        for i in range(4,number+1):
+            for j in range(1,i//2+1):
+                memo[i] = max(memo[i],memo[j]*memo[i-j])
+        return memo[-1]
+```
+## 15、二进制中1的个数
+一个很巧妙的解法
+```
+# -*- coding:utf-8 -*-
+class Solution:
+    def NumberOf1(self, n):
+        # write code here
+        
+        count = 0
+        if n < 0:
+            n = n & 0xffffffff
+        while n:
+            count += 1
+            # n-1:最右边的一个1开始的所有位都取反了
+            # (n - 1) & n 相当于每次减掉最右边的一个1
+            n = (n - 1) & n
+        return count
+```
