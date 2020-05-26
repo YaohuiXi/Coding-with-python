@@ -95,7 +95,7 @@
 
 (3) 数组中数字在0~n-1中，如果数组没有重复的，那么当数组排序后，数字i将出现在下标为i的位置。如果有重复的，那么某些位置会有多个数字，某些位置会没有数字
 重排数组，当扫描到下标为i的数字时，首先比较这个数字（numbers[i]）是不是等于i,如果是，扫描下一个数字，如果不是，则将它与第numbers[i]个数字（值为numbers[numbers[i]]）比较，如果相等，则找到一个重复的数字，如果不想等，则把第i个数字与第numbers[i]个数字交换（numbers[i]放到下标为numbers[i]的位置，numbers[val]放到i的位置上，val = numbers[i],注意交换顺序），重复该过程，直到找到一个重复元素。
- ```
+ ```python
  # -*- coding:utf-8 -*-
 class Solution:
     # 这里要特别注意~找到任意重复的一个值并赋值到duplication[0]
@@ -117,6 +117,40 @@ class Solution:
         return False  
 ```
 
+扩展：LeetCode 287. 寻找重复数（二分查找）
+
+给定一个包含 n + 1 个整数的数组 nums，其数字都在 1 到 n 之间（包括 1 和 n），可知至少存在一个重复的整数。假设只有一个重复的整数，找出这个重复的数。
+
+要求：
+不能更改原数组（假设数组是只读的）。
+只能使用额外的 O(1) 的空间。
+时间复杂度小于 O(n2) 。
+数组中只有一个重复的数字，但它可能不止重复出现一次。
+
+```python
+class Solution:
+    def findDuplicate(self, nums: List[int]) -> int:
+        n = len(nums) -1
+        left = 1
+        right = n
+        while left < right:
+            mid = left + (right - left) // 2
+            cnt = 0
+            for num in nums:
+                if num <= mid:
+                    cnt += 1
+            # 根据抽屉原理，小于等于 4 的数的个数如果严格大于 4 个，
+            # 此时重复元素一定出现在 [1, 4] 区间里
+            if cnt > mid:
+                # 重复的元素一定出现在 [left, mid] 区间里
+                right = mid
+            else:
+                # if 分析正确了以后，else 搜索的区间就是 if 的反面
+                # [mid + 1, right]
+                left = mid + 1
+        return left
+  
+```     
 ## 12、矩阵中的路径（p89）
 
 题目描述
@@ -126,7 +160,7 @@ DFS/回溯
 
 #遍历矩阵中的每一个位置
 
-```
+```python
 class Solution:
     def hasPath(self, matrix, rows, cols, path):
         # write code here
