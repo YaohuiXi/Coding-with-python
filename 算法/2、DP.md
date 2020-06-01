@@ -1,4 +1,4 @@
-## 1、矩阵
+## 1、矩阵[经典]
 ### 1.1 LeetCode64 矩阵的最小路径和
 法二：压缩空间，一维数组做
 ```python
@@ -30,7 +30,7 @@ class Solution:
                 cur[j] += cur[j-1]
         return cur[-1]
 ```
-## 2、子序列
+## 2、子序列【经典】
 ### 2.1 最长递增子序列
 ```python
 class Solution:
@@ -114,4 +114,25 @@ class Solution:
 
 ## 5、股票交易（6题）
 
+提高版
+* LeetCode 84 柱状图中最大的矩形
+https://leetcode-cn.com/problems/largest-rectangle-in-histogram/
 
+之前忘了哪家笔试考了，完全做不出来，LeetCode真的非常有用啊
+```python
+class Solution:
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        n = len(heights)
+        left, right = [0] * n, [n] * n
+
+        mono_stack = list()
+        for i in range(n):
+            while mono_stack and heights[mono_stack[-1]] >= heights[i]:
+                right[mono_stack[-1]] = i
+                mono_stack.pop()
+            left[i] = mono_stack[-1] if mono_stack else -1
+            mono_stack.append(i)
+        
+        ans = max((right[i] - left[i] - 1) * heights[i] for i in range(n)) if n > 0 else 0
+        return ans
+```
