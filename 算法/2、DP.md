@@ -136,3 +136,43 @@ class Solution:
         ans = max((right[i] - left[i] - 1) * heights[i] for i in range(n)) if n > 0 else 0
         return ans
 ```
+
+0610 更新 vivo提前批第二题（DP难起来总可以让人连题目都看不懂）
+
+* 887. 鸡蛋掉落
+方法一：动态规划 + 二分搜索
+状态可以表示成 (K,N)，其中 K 为鸡蛋数，N 为楼层数
+```python
+class Solution:
+    def superEggDrop(self, K: int, N: int) -> int:
+        # 记忆化搜索，键为(k,n),值为测试次数
+        self.memo = {}
+        return self.dp(K, N)
+
+    def dp(self,k, n):
+        if (k, n) not in self.memo:
+            if n == 0:
+                ans = 0
+            elif k == 1:
+                ans = n
+            else:
+                lo, hi = 1, n
+                # lo,li相差一或者相当，找到极值
+                while lo + 1 < hi:
+                    x = (lo + hi) // 2
+                    t1 = self.dp(k-1, x-1)
+                    t2 = self.dp(k, n-x)
+                    # 最大的满足 T1(X)<T2(X)的X0​
+                    if t1 < t2:
+                        lo = x
+                    elif t1 > t2:
+                        hi = x
+                    else:
+                        lo = hi = x
+
+                ans = 1 + min(max(self.dp(k-1, x-1), self.dp(k, n-x))
+                                  for x in (lo, hi))
+
+            self.memo[k, n] = ans
+        return self.memo[k, n]
+```
