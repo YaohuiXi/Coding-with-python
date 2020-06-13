@@ -30,8 +30,9 @@ class Solution:
                 cur[j] += cur[j-1]
         return cur[-1]
 ```
-## 2、子序列【经典】
-### 2.1 最长递增子序列
+## 2、子序列问题【经典】
+### leetcode 300 最长递增子序列
+法一：两层循环，复杂度O(n^2)
 ```python
 class Solution:
     def lengthOfLIS(self, nums: List[int]) -> int:
@@ -45,6 +46,98 @@ class Solution:
                     dp[i] = max(dp[i],dp[j]+1)
         return max(dp)
 ```
+法二：优化，复杂度O(nlogn)
+
+参考资料：https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/dong-tai-gui-hua-er-fen-cha-zhao-tan-xin-suan-fa-p/
+
+第 1 步：定义新状态（特别重要）
+
+tail[i] 表示长度为 i + 1 的所有上升子序列的结尾的最小值。
+
+第 2 步：思考状态转移方程
+
+数组 tail 也是一个严格上升数组
+
+* 流程：
+1、设置一个数组 tail，初始时为空；
+
+2、在遍历数组 nums 的过程中，每来一个新数 num，如果这个数严格大于有序数组 tail 的最后一个元素，就把 num 放在有序数组 tail 的后面，否则进入第 3 点；
+
+3、在有序数组 tail 中查找第 1 个等于大于 num 的那个数，试图让它变小；
+
+4、遍历完整个数组 nums，最终有序数组 tail 的长度，就是所求的“最长上升子序列”的长度。
+
+```python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+        size = len(nums)
+        # 特判
+        if size < 2:
+            return size
+        # 为了防止后序逻辑发生数组索引越界，先把第 1 个数放进去
+        tail = [nums[0]]
+        for i in range(1, size):
+            # 【逻辑 1】比 tail 数组实际有效的末尾的那个元素还大
+            # 先尝试是否可以接在末尾
+            if nums[i] > tail[-1]:
+                tail.append(nums[i])
+                continue
+            # 使用二分查找法，在有序数组 tail 中
+            # 找到第 1 个大于等于 nums[i] 的元素，尝试让那个元素更小
+            left = 0
+            right = len(tail) - 1
+            while left < right:
+                # 选左中位数不是偶然，而是有原因的，原因请见 LeetCode 第 35 题题解
+                mid = left + (right - left) // 2
+                # mid = (left + right) >> 1
+                if tail[mid] < nums[i]:
+                    # 中位数肯定不是要找的数，把它写在分支的前面
+                    left = mid + 1
+                else:
+                    right = mid
+            # 走到这里是因为【逻辑 1】的反面，因此一定能找到第 1 个大于等于 nums[i] 的元素，因此无需再单独判断
+            tail[left] = nums[i]
+        return len(tail)
+```
+
+### leetcode 376. 摆动序列（复杂度O(n)）
+法一：类似最长递增，两重循环做，复杂度O(n^2)
+```python
+class Solution:
+    def wiggleMaxLength(self, nums: List[int]) -> int:
+        if len(nums) < 2:
+            return len(nums)
+        memo = [[1,1] for _ in range (len(nums))]
+        for i in range(1,len(nums)):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    # print(memo[i])
+                    memo[i][0] = max(memo[i][0],memo[j][1]+1)
+                if nums[i] < nums[j]:
+                    memo[i][1] = max(memo[i][1],memo[j][0]+1)
+        return max(memo[-1])
+```
+法二：DP
+
+
+法三：贪心，复杂度O(n)
+```python
+class Solution:
+    def wiggleMaxLength(self, nums: List[int]) -> int:
+        n = len(nums)
+        if n < 2: return n
+        up, down = 1,1
+        for i in range(1, n):
+            if nums[i] > nums[i - 1]:
+                # 这次上升=到上次下降+1
+                up = down + 1
+            elif nums[i] < nums[i - 1]:
+                # 这次下降=到上次上升+1
+                down = up + 1
+        return max(up,down)
+```
+
+
 ### 2.2 最长公共子序列
 ```python
 class Solution:
