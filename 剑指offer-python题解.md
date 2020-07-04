@@ -1,6 +1,6 @@
 以下是本人基于剑指offer的书的思路，用Python写得代码，个人整理使用，较全，
 建议配合牛客网OJ使用 https://www.nowcoder.com/ta/coding-interviews
-
+sssssssssssssssssssssss
 题目序号按照剑指offer第二版
 
 ## 第2章 面试需要的基本知识
